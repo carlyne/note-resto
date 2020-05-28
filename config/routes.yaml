@@ -34,3 +34,29 @@
 # get   /restaurant/{id}/avis/{id}/edit     admin, client, restaurateur   formulaire
 # post  /restaurant/{id}/avis/{id}/update   admin, client, restaurateur   traitement
 # get   /restaurant/{id}/avis/{id}/delete   admin, client, restaurateur   traitement  
+
+
+# tables :
+
+# Restaurant
+# Restaurateur
+# User
+# Client
+# Avis
+# Notation
+
+
+# User 1->n :            id | mail      | password      | role_id  
+# Role n->1 :            id | nom
+
+# Admin 1->n :           id | user.id   | restaurant.id 
+
+# Client 1->n :          id | nom       | prenom        | rating_id       | avis_id
+
+# Avis n->1   :          id | titre     | content       | client_id       | restaurant_id 
+# Rating n->1 :          id | rating    | client_id     | restaurant_id
+
+# Restaurant 1->n :      id | name      | address       | restaurateur_id | rating_id     | avis_id | src_image
+# Restaurateur 1->1:     id | last_name | first_name    | restaurant_id   
+
+
