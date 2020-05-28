@@ -1,0 +1,36 @@
+# auth :
+
+# get   /login    all   formulaire
+# post  /login    all   traitement
+# get   /logout   all   traitement
+# get   /signup   all   formulaire
+# post  /signup   all   traitement
+
+# get   /user               admin
+# get   /user/{id}          admin
+# get   /user/{id}/delete   admin
+
+
+# affichage :
+
+# get   /restaurant         all
+# get   /restaurant/{id}    all   + formulaire avis + formulaire notation
+
+
+# Actions :
+
+# get   /restaurant/new           admin, restaurateur    formulaire
+# post  /restaurant/create        admin, restaurateur    traitement
+# get   /restaurant/{id}/edit     admin, restaurateur    formulaire
+# post  /restaurant/{id}/update   admin, restaurateur    traitement
+# get   /restaurant/{id}/delete   admin, restaurateur    traitement
+
+# post  /restaurant/{id}/notation/create        admin, client   traitement
+# get   /restaurant/{id}/notation/{id}/edit     admin, client   formulaire
+# post  /restaurant/{id}/notation/{id}/update   admin, client   traitement
+# get   /restaurant/{id}/notation/{id}/edit     admin, client   traitement
+
+# post  /restaurant/{id}/avis/{id}/create   admin, client, restaurateur   traitement
+# get   /restaurant/{id}/avis/{id}/edit     admin, client, restaurateur   formulaire
+# post  /restaurant/{id}/avis/{id}/update   admin, client, restaurateur   traitement
+# get   /restaurant/{id}/avis/{id}/delete   admin, client, restaurateur   traitement  
