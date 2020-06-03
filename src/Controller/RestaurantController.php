@@ -20,10 +20,8 @@ class RestaurantController extends AbstractController
      */
     public function index(RestaurantRepository $restaurantRepository): Response
     {
-
-
         return $this->render('restaurant/index.html.twig', [
-            'restaurants' => $restaurantRepository->findAll()->setMaxResults(100)
+            'restaurants' => $restaurantRepository->findAll(),
         ]);
     }
 

@@ -19,6 +19,14 @@
                 <th>Address</th>
                 <td>{{ restaurant.address }}</td>
             </tr>
+            <tr>
+                <th>Created_at</th>
+                <td>{{ restaurant.createdAt ? restaurant.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Src_image</th>
+                <td>{{ restaurant.srcImage }}</td>
+            </tr>
         </tbody>
     </table>
 

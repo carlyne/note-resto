@@ -14,6 +14,8 @@ class RestaurantType extends AbstractType
         $builder
             ->add('name')
             ->add('address')
+            ->add('created_at')
+            ->add('src_image')
             ->add('restaurateur_id')
         ;
     }

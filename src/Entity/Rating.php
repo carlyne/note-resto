@@ -33,6 +33,11 @@ class Rating
      */
     private $client_id;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Restaurant::class, inversedBy="rating_id")
+     */
+    private $restaurant;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,6 +75,18 @@ class Rating
     public function setClientId(?Client $client_id): self
     {
         $this->client_id = $client_id;
+
+        return $this;
+    }
+
+    public function getRestaurant(): ?Restaurant
+    {
+        return $this->restaurant;
+    }
+
+    public function setRestaurant(?Restaurant $restaurant): self
+    {
+        $this->restaurant = $restaurant;
 
         return $this;
     }

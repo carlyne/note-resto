@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,35 +21,44 @@ class Restaurant
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $address;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Restaurateur::class, mappedBy="restaurant_id")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $src_image;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Restaurateur::class)
      */
     private $restaurateur_id;
 
     /**
-     * @ORM\OneToMany(targetEntity=Avis::class, mappedBy="restaurant_id", orphanRemoval=true)
-     */
-    private $avis_id;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="restaurant_id", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="restaurant")
      */
     private $rating_id;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Avis::class, mappedBy="restaurant")
+     */
+    private $avis_id;
+
     public function __construct()
-    {
-        $this->restaurateur_id = new ArrayCollection();
-        $this->avis_id = new ArrayCollection();
+    {   
         $this->rating_id = new ArrayCollection();
+        $this->avis_id = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -61,7 +71,7 @@ class Restaurant
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -73,36 +83,75 @@ class Restaurant
         return $this->address;
     }
 
-    public function setAddress(string $address): self
+    public function setAddress(?string $address): self
     {
         $this->address = $address;
 
         return $this;
     }
 
-    /**
-     * @return Collection|Restaurateur[]
-     */
-    public function getRestaurateurId(): Collection
+    public function getCreatedAt(): ?DateTime
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(?\DateTime $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getSrcImage(): ?string
+    {
+        return $this->src_image;
+    }
+
+    public function setSrcImage(?string $src_image): self
+    {
+        $this->src_image = $src_image;
+
+        return $this;
+    }
+
+    public function getRestaurateurId(): ?Restaurateur
     {
         return $this->restaurateur_id;
     }
 
-    public function addRestaurateurId(Restaurateur $restaurateurId): self
+    public function setRestaurateurId(?Restaurateur $restaurateur_id): self
     {
-        if (!$this->restaurateur_id->contains($restaurateurId)) {
-            $this->restaurateur_id[] = $restaurateurId;
-            $restaurateurId->addRestaurantId($this);
+        $this->restaurateur_id = $restaurateur_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Rating[]
+     */
+    public function getRatingId(): Collection
+    {
+        return $this->rating_id;
+    }
+
+    public function addRatingId(Rating $ratingId): self
+    {
+        if (!$this->rating_id->contains($ratingId)) {
+            $this->rating_id[] = $ratingId;
+            $ratingId->setRestaurant($this);
         }
 
         return $this;
     }
 
-    public function removeRestaurateurId(Restaurateur $restaurateurId): self
+    public function removeRatingId(Rating $ratingId): self
     {
-        if ($this->restaurateur_id->contains($restaurateurId)) {
-            $this->restaurateur_id->removeElement($restaurateurId);
-            $restaurateurId->removeRestaurantId($this);
+        if ($this->rating_id->contains($ratingId)) {
+            $this->rating_id->removeElement($ratingId);
+            // set the owning side to null (unless already changed)
+            if ($ratingId->getRestaurant() === $this) {
+                $ratingId->setRestaurant(null);
+            }
         }
 
         return $this;
@@ -120,7 +169,7 @@ class Restaurant
     {
         if (!$this->avis_id->contains($avisId)) {
             $this->avis_id[] = $avisId;
-            $avisId->setRestaurantId($this);
+            $avisId->setRestaurant($this);
         }
 
         return $this;
@@ -131,39 +180,8 @@ class Restaurant
         if ($this->avis_id->contains($avisId)) {
             $this->avis_id->removeElement($avisId);
             // set the owning side to null (unless already changed)
-            if ($avisId->getRestaurantId() === $this) {
-                $avisId->setRestaurantId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Rating[]
-     */
-    public function getRatingId(): Collection
-    {
-        return $this->rating_id;
-    }
-
-    public function addRatingId(Rating $ratingId): self
-    {
-        if (!$this->rating_id->contains($ratingId)) {
-            $this->rating_id[] = $ratingId;
-            $ratingId->setRestaurantId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRatingId(Rating $ratingId): self
-    {
-        if ($this->rating_id->contains($ratingId)) {
-            $this->rating_id->removeElement($ratingId);
-            // set the owning side to null (unless already changed)
-            if ($ratingId->getRestaurantId() === $this) {
-                $ratingId->setRestaurantId(null);
+            if ($avisId->getRestaurant() === $this) {
+                $avisId->setRestaurant(null);
             }
         }
 

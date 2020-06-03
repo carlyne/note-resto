@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Restaurant;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker;
@@ -17,6 +18,7 @@ class RestaurantFixtures extends Fixture
             $restaurant = new Restaurant();
             $restaurant->setName($faker->company);
             $restaurant->setAddress($faker->streetAddress);
+            $restaurant->setCreatedAt(new DateTime());
             $manager->persist($restaurant);
         }
 
