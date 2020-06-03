@@ -19,6 +19,11 @@ class RestaurantRepository extends ServiceEntityRepository
         parent::__construct($registry, Restaurant::class);
     }
 
+    public function findAllByAsc()
+    {
+        return $this->findBy(array(), array('created_at' => 'DESC'), 10);
+    }
+
     // /**
     //  * @return Restaurant[] Returns an array of Restaurant objects
     //  */
