@@ -2,65 +2,93 @@
 
 namespace App\Controller;
 
+use App\Entity\Avis;
+use App\Form\AvisType;
+use App\Repository\AvisRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AvisController extends AbstractController {
-	/** @Route("/restaurants/{id}", requirements={"id"="\d+"}, name="restaurants_show") */
-	public function indexAvis() : Response
-	{
-		return $this->render('restaurants/show.html.twig');
-	}
+/**
+ * @Route("/avis")
+ */
+class AvisController extends AbstractController
+{
+    /**
+     * @Route("/", name="avis_index", methods={"GET"})
+     */
+    public function index(AvisRepository $avisRepository): Response
+    {
+        return $this->render('avis/index.html.twig', [
+            'avis' => $avisRepository->findAll(),
+        ]);
+    }
 
-	/** @Route("/restaurants/{idRestaurant}/avis/{$idAvis}", methods={"GET", "HEAD"}, requirements={"idRestaurant"="\d+", "idAvis"="\d+"}, name="restaurants_show_avis") */
-	public function showAvis(int $idRestaurant, int $idAvis) : Response
-	{
-		return $this->render('restaurants/avis/show.html.twig');
-	}
+    /**
+     * @Route("/new", name="avis_new", methods={"GET","POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $avi = new Avis();
+        $form = $this->createForm(AvisType::class, $avi);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($avi);
+            $entityManager->flush();
 
-	/** @Route("/restaurants/{idRestaurant}/avis/{idAvis}/edit", methods={"GET"}, requirements={"idRestaurant"="\d+", "idAvis"="\d+"}, name="avis_edit") */
-	public function editAvis(int $idRestaurant, int $idAvis) : Response
-	{
-		return $this->render('restaurant/avis/edit.html.twig');
-	}
+            return $this->redirectToRoute('avis_index');
+        }
 
-	/** @Route("/restaurants/{idRestaurant}/avis/{idAvis}/update", methods={"GET", "POST"}, requirements={"idRestaurant"="\d+", "idAvis"="\d+"}, name="avis_update") */
-	public function updateAvis(int $idRestaurant, int $idAvis, Request $request) : Response
-	{
-		$headerInfo = $request->query->get('q');
-		dd($headerInfo);
+        return $this->render('avis/new.html.twig', [
+            'avi' => $avi,
+            'form' => $form->createView(),
+        ]);
+    }
 
-		return $this->redirectToRoute('restaurants');
-	}
+    /**
+     * @Route("/{id}", name="avis_show", methods={"GET"})
+     */
+    public function show(Avis $avi): Response
+    {
+        return $this->render('avis/show.html.twig', [
+            'avi' => $avi,
+        ]);
+    }
 
+    /**
+     * @Route("/{id}/edit", name="avis_edit", methods={"GET","POST"})
+     */
+    public function edit(Request $request, Avis $avi): Response
+    {
+        $form = $this->createForm(AvisType::class, $avi);
+        $form->handleRequest($request);
 
-	/** @Route("/restaurants/{idRestaurant}/avis/{idAvis}/delete", requirements={"idRestaurant"="\d+", "idAvis"="\d+"}, name="avis_delete") */
-	public function deleteAvis(int $idRestaurant, int $idAvis, Request $request) : Response
-	{
-		$headerInfo = $request->query->get('q');
-		dd($headerInfo);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
 
-		return $this->redirectToRoute('restaurants');
-	}
+            return $this->redirectToRoute('avis_index');
+        }
 
+        return $this->render('avis/edit.html.twig', [
+            'avi' => $avi,
+            'form' => $form->createView(),
+        ]);
+    }
 
-	/** @Route("restaurants/{id}/avis/new", requirements={"id"="\d+"}, name="avis_new") */
-	public function newAvis(int $id) : Response
-	{
-		return $this->render('restaurants/avis/new.html.twig');
-	}
+    /**
+     * @Route("/{id}", name="avis_delete", methods={"DELETE"})
+     */
+    public function delete(Request $request, Avis $avi): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$avi->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($avi);
+            $entityManager->flush();
+        }
 
-	/** @Route("restaurants/{id}/avis/create", methods={"GET", "POST"}, requirements={"id"="\d+"}, name="avis_create") */
-	public function createAvis(int $id, Request $request) : Response
-	{
-		$headerInfo = $request->query->get('q');
-		dd($headerInfo);
-
-		return $this->redirectToRoute('restaurants');
-	}
+        return $this->redirectToRoute('avis_index');
+    }
 }
-
-?>

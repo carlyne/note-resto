@@ -2,65 +2,95 @@
 
 namespace App\Controller;
 
+use App\Entity\Restaurant;
+use App\Form\RestaurantType;
+use App\Repository\RestaurantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RestaurantController extends AbstractController {
-	/** @Route("/restaurants", name="restaurants") */
-	public function indexRestaurants()	: Response
-	{
-		return $this->render('restaurants/index.html.twig');
-	}
-
-	/** @Route("/restaurants/{id}", methods={"GET", "HEAD"}, requirements={"id"="\d+"}, name="restaurants_show") */
-	public function showRestaurant(int $id) : Response
-	{
-		return $this->render('restaurants/show.html.twig');
-	}
+/**
+ * @Route("/restaurant")
+ */
+class RestaurantController extends AbstractController
+{
+    /**
+     * @Route("/", name="restaurant_index", methods={"GET"})
+     */
+    public function index(RestaurantRepository $restaurantRepository): Response
+    {
 
 
-	/** @Route("/restaurants/{id}/edit", methods={"GET"}, requirements={"id"="\d+"}, name="restaurants_edit") */
-	public function editRestaurant(int $id) : Response
-	{
-		return $this->render('restaurants/edit.html.twig');
-	}
+        return $this->render('restaurant/index.html.twig', [
+            'restaurants' => $restaurantRepository->findAll()->setMaxResults(100)
+        ]);
+    }
 
-	/** @Route("/restaurants/{id}/update", methods={"GET", "POST"}, requirements={"id"="\d+"}, name="restaurants_update") */
-	public function updateRestaurant(int $id, Request $request) : Response
-	{
-		$headerInfo = $request->query->get('q');
-		dd($headerInfo);
+    /**
+     * @Route("/new", name="restaurant_new", methods={"GET","POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $restaurant = new Restaurant();
+        $form = $this->createForm(RestaurantType::class, $restaurant);
+        $form->handleRequest($request);
 
-		return $this->redirectToRoute('restaurants');
-	}
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($restaurant);
+            $entityManager->flush();
 
+            return $this->redirectToRoute('restaurant_index');
+        }
 
-	/** @Route("/restaurants/{id}/delete", name="restaurants_delete") */
-	public function deleteRestaurants(int $id, Request $request) : Response
-	{
-		$headerInfo = $request->query->get('q');
-		dd($headerInfo);
+        return $this->render('restaurant/new.html.twig', [
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ]);
+    }
 
-		return $this->redirectToRoute('restaurants');
-	}
+    /**
+     * @Route("/{id}", name="restaurant_show", methods={"GET"})
+     */
+    public function show(Restaurant $restaurant): Response
+    {
+        return $this->render('restaurant/show.html.twig', [
+            'restaurant' => $restaurant,
+        ]);
+    }
 
+    /**
+     * @Route("/{id}/edit", name="restaurant_edit", methods={"GET","POST"})
+     */
+    public function edit(Request $request, Restaurant $restaurant): Response
+    {
+        $form = $this->createForm(RestaurantType::class, $restaurant);
+        $form->handleRequest($request);
 
-	/** @Route("/restaurants/new", name="restaurants_new") */
-	public function newRestaurant() : Response
-	{
-		return $this->render('restaurants/new.html.twig');
-	}
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
 
-	/** @Route("/restaurants/create", methods={"GET", "POST"}, name="restaurants_create") */
-	public function createRestaurants(Request $request) : Response
-	{
-		$headerInfo = $request->query->get('q');
-		dd($headerInfo);
+            return $this->redirectToRoute('restaurant_index');
+        }
 
-		return $this->redirectToRoute('restaurants');
-	}
+        return $this->render('restaurant/edit.html.twig', [
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="restaurant_delete", methods={"DELETE"})
+     */
+    public function delete(Request $request, Restaurant $restaurant): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$restaurant->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($restaurant);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('restaurant_index');
+    }
 }
-
-?>
