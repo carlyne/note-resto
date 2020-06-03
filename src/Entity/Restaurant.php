@@ -51,7 +51,8 @@ class Restaurant
     private $reviews;
 
     public function __construct()
-    {
+    {   
+        $this->setCreatedAt(new \DateTime());
         $this->restaurantPictures = new ArrayCollection();
         $this->reviews = new ArrayCollection();
     }
