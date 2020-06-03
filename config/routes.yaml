@@ -46,7 +46,7 @@
 # Notation
 
 
-# User 1->n :            id | mail      | password      | role_id  
+# User 1->n :            id | mail      | password      | roles
 # Role n->1 :            id | nom
 
 # Admin 1->n :           id | user.id   | restaurant.id 
@@ -58,5 +58,8 @@
 
 # Restaurant 1->n :      id | name      | address       | restaurateur_id | rating_id     | avis_id | src_image
 # Restaurateur 1->1:     id | last_name | first_name    | restaurant_id   
+
+
+
 
 

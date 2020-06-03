@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,44 +20,40 @@ class Restaurant
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
-    private $address;
+    private $description;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
      */
-    private $created_at;
+    private $createdAt;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity=City::class, inversedBy="restaurants")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $src_image;
+    private $city;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Restaurateur::class)
+     * @ORM\OneToMany(targetEntity=RestaurantPicture::class, mappedBy="restaurant", orphanRemoval=true)
      */
-    private $restaurateur_id;
+    private $restaurantPictures;
 
     /**
-     * @ORM\OneToMany(targetEntity=Rating::class, mappedBy="restaurant")
+     * @ORM\OneToMany(targetEntity=Review::class, mappedBy="restaurant", orphanRemoval=true)
      */
-    private $rating_id;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Avis::class, mappedBy="restaurant")
-     */
-    private $avis_id;
+    private $reviews;
 
     public function __construct()
-    {   
-        $this->rating_id = new ArrayCollection();
-        $this->avis_id = new ArrayCollection();
+    {
+        $this->restaurantPictures = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -71,86 +66,74 @@ class Restaurant
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getDescription(): ?string
     {
-        return $this->address;
+        return $this->description;
     }
 
-    public function setAddress(?string $address): self
+    public function setDescription(?string $description): self
     {
-        $this->address = $address;
+        $this->description = $description;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTime
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTime $created_at): self
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getSrcImage(): ?string
+    public function getCity(): ?City
     {
-        return $this->src_image;
+        return $this->city;
     }
 
-    public function setSrcImage(?string $src_image): self
+    public function setCity(?City $city): self
     {
-        $this->src_image = $src_image;
-
-        return $this;
-    }
-
-    public function getRestaurateurId(): ?Restaurateur
-    {
-        return $this->restaurateur_id;
-    }
-
-    public function setRestaurateurId(?Restaurateur $restaurateur_id): self
-    {
-        $this->restaurateur_id = $restaurateur_id;
+        $this->city = $city;
 
         return $this;
     }
 
     /**
-     * @return Collection|Rating[]
+     * @return Collection|RestaurantPicture[]
      */
-    public function getRatingId(): Collection
+    public function getRestaurantPictures(): Collection
     {
-        return $this->rating_id;
+        return $this->restaurantPictures;
     }
 
-    public function addRatingId(Rating $ratingId): self
+    public function addRestaurantPicture(RestaurantPicture $restaurantPicture): self
     {
-        if (!$this->rating_id->contains($ratingId)) {
-            $this->rating_id[] = $ratingId;
-            $ratingId->setRestaurant($this);
+        if (!$this->restaurantPictures->contains($restaurantPicture)) {
+            $this->restaurantPictures[] = $restaurantPicture;
+            $restaurantPicture->setRestaurant($this);
         }
 
         return $this;
     }
 
-    public function removeRatingId(Rating $ratingId): self
+    public function removeRestaurantPicture(RestaurantPicture $restaurantPicture): self
     {
-        if ($this->rating_id->contains($ratingId)) {
-            $this->rating_id->removeElement($ratingId);
+        if ($this->restaurantPictures->contains($restaurantPicture)) {
+            $this->restaurantPictures->removeElement($restaurantPicture);
             // set the owning side to null (unless already changed)
-            if ($ratingId->getRestaurant() === $this) {
-                $ratingId->setRestaurant(null);
+            if ($restaurantPicture->getRestaurant() === $this) {
+                $restaurantPicture->setRestaurant(null);
             }
         }
 
@@ -158,30 +141,30 @@ class Restaurant
     }
 
     /**
-     * @return Collection|Avis[]
+     * @return Collection|Review[]
      */
-    public function getAvisId(): Collection
+    public function getReviews(): Collection
     {
-        return $this->avis_id;
+        return $this->reviews;
     }
 
-    public function addAvisId(Avis $avisId): self
+    public function addReview(Review $review): self
     {
-        if (!$this->avis_id->contains($avisId)) {
-            $this->avis_id[] = $avisId;
-            $avisId->setRestaurant($this);
+        if (!$this->reviews->contains($review)) {
+            $this->reviews[] = $review;
+            $review->setRestaurant($this);
         }
 
         return $this;
     }
 
-    public function removeAvisId(Avis $avisId): self
+    public function removeReview(Review $review): self
     {
-        if ($this->avis_id->contains($avisId)) {
-            $this->avis_id->removeElement($avisId);
+        if ($this->reviews->contains($review)) {
+            $this->reviews->removeElement($review);
             // set the owning side to null (unless already changed)
-            if ($avisId->getRestaurant() === $this) {
-                $avisId->setRestaurant(null);
+            if ($review->getRestaurant() === $this) {
+                $review->setRestaurant(null);
             }
         }
 

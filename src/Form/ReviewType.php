@@ -2,18 +2,18 @@
 
 namespace App\Form;
 
-use App\Entity\Restaurant;
+use App\Entity\Review;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RestaurantType extends AbstractType
+class ReviewType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
-            ->add('description')
+            ->add('message')
+            ->add('rating')
             ->add('createdAt')
         ;
     }
@@ -21,7 +21,7 @@ class RestaurantType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Restaurant::class,
+            'data_class' => Review::class,
         ]);
     }
 }

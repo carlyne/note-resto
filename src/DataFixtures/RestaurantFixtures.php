@@ -17,7 +17,6 @@ class RestaurantFixtures extends Fixture
         for ($i = 0; $i < 100; $i++) {
             $restaurant = new Restaurant();
             $restaurant->setName($faker->company);
-            $restaurant->setAddress($faker->streetAddress);
             $restaurant->setCreatedAt(new DateTime());
             $manager->persist($restaurant);
         }
