@@ -19,6 +19,11 @@ class RestaurantRepository extends ServiceEntityRepository
         parent::__construct($registry, Restaurant::class);
     }
 
+    public function findLastElements()
+    {
+        return $this->findBy([], ['createdAt' => 'DESC'], 10);
+    }
+
     // /**
     //  * @return Restaurant[] Returns an array of Restaurant objects
     //  */
