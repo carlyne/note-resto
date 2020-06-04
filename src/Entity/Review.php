@@ -6,11 +6,12 @@ use App\Repository\ReviewRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @ORM\Entity(repositoryClass=ReviewRepository::class)
  */
-class Review
+class Review extends AbstractController
 {
     /**
      * @ORM\Id()

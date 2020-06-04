@@ -6,11 +6,12 @@ use App\Repository\RestaurantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @ORM\Entity(repositoryClass=RestaurantRepository::class)
  */
-class Restaurant
+class Restaurant extends AbstractController
 {
     /**
      * @ORM\Id()
@@ -55,6 +56,24 @@ class Restaurant
         $this->setCreatedAt(new \DateTime());
         $this->restaurantPictures = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+    }
+
+    public function getAverageRating() {
+
+        $reviews = $this->getReviews();
+        $ratingSum = 0;
+        $ratingCount = 0;
+
+        foreach ($reviews as $review) {
+            $ratingSum += $review->getRating();
+            $ratingCount++;
+        }
+
+        if ($ratingCount > 0) {
+            return $ratingSum / $ratingCount;
+        }
+
+        return null;
     }
 
     public function getId(): ?int

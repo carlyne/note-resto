@@ -10,6 +10,7 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>Description</th>
+                <th>Rating</th>
                 <th>CreatedAt</th>
                 <th>actions</th>
             </tr>
@@ -20,6 +21,7 @@
                 <td>{{ restaurant.id }}</td>
                 <td>{{ restaurant.name }}</td>
                 <td>{{ restaurant.description }}</td>
+                <td>{{ restaurant.averageRating | round(1)/5 }} / 5</td>
                 <td>{{ restaurant.createdAt ? restaurant.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('restaurant_show', {'id': restaurant.id}) }}">show</a>

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Restaurant;
+use App\Entity\Review;
 use App\Form\RestaurantType;
 use App\Repository\RestaurantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,8 +21,13 @@ class RestaurantController extends AbstractController
      */
     public function index(RestaurantRepository $restaurantRepository): Response
     {
+
+        $restaurants =  $restaurantRepository->findAll();
+
+        dd($this->getDoctrine()->getRepository(Review::class)->findAverage());
+
         return $this->render('restaurant/index.html.twig', [
-            'restaurants' => $restaurantRepository->findAll(),
+            'restaurants' =>  $restaurants
         ]);
     }
 
